@@ -33,7 +33,7 @@
                     <c:forEach items="${list}" var="board">
                         <tr>
                             <td>${board.bno}</td><!--target="_blank"-->
-                            <td><a href="/board/get?bno=${board.bno}">${board.title}</a></td>
+                            <td><a class="move" href="<c:out value='${board.bno}'/>">${board.title}</a></td>
                             <td>${board.writer}</td>
                             <td><fmt:formatDate value="${board.regDate}" pattern="yyyy-MM-dd"/></td>
                             <td><fmt:formatDate value="${board.updateDate}" pattern="yyyy-MM-dd"/></td>
@@ -41,7 +41,26 @@
                     </c:forEach>
                 </table>
                 <!-- /.table-responsive -->
+                <!-- paging -->
+                <div class="pull-right">
+                    <ul class="pagination">
+                        <c:if test="${pageMaker.prev}">
+                            <li class="paginate_button previous"><a href="${pageMaker.startPage - 1}">Previous</a></li>
+                        </c:if>
+                        <c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+                            <li class="paginate_button"><a href="${num}">${num}</a></li>
+                        </c:forEach>
+                        <c:if test="${pageMaker.next}">
+                            <li class="paginate_button next"><a href="${pageMaker.endPage + 1}">Next</a></li>
+                        </c:if>
+                    </ul>
+                </div>
+                <form id="actionForm" action="/board/list" method="get">
+                    <input type="hidden" name="pageNum" value="${pageMaker.criteria.pageNum}">
+                    <input type="hidden" name="amount" value="${pageMaker.criteria.amount}">
+                </form>
 
+                <!-- end paging -->
                 <!-- modal -->
                 <div class="modal fade" id="myModal"
                      tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -70,25 +89,44 @@
 
 <script>
     $(document).ready(function () {
+        //모달창 표현
         var result = '<c:out value="${result}"/>';
-
         checkModal(result);
         history.replaceState({},null,null);
 
+        //모달창 표현 함수
         function checkModal(result) {
             if (result === '' || history.state) {
                 return;
             }
-
             if (parseInt(result) > 0) {
                 $(".modal-body").html("게시글 " + parseInt(result) + "번이 등록되었습니다.");
             }
-
             $("#myModal").modal("show");
         }
 
+        //등록 버튼 처리
         $("#regBtn").on("click", function () {
             self.location = "/board/register";
         });
+
+        //게시물 조회 실제 처리
+        $(".move").on("click", function (e) {
+            e.preventDefault();
+            actionForm.append("<input type='hidden' name='bno' value='" + $(this).attr("href") + "'>");
+            actionForm.attr("action", "/board/get");
+            actionForm.submit();
+        });
+
+        //페이지 이동 처리
+        var actionForm = $("#actionForm");
+        $(".paginate_button a").on("click", function (e) {
+            e.preventDefault();
+            console.log("click");
+            actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+            actionForm.submit();
+        });
+
+
     });
 </script>

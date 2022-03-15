@@ -5,13 +5,11 @@ import lombok.extern.log4j.Log4j;
 import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import stu.kms.domain.BoardVO;
 import stu.kms.domain.Criteria;
+import stu.kms.domain.PageDTO;
 import stu.kms.service.BoardService;
 
 @Controller
@@ -26,6 +24,7 @@ public class BoardController {
     public void list(Criteria criteria, Model model) {
         log.info("list : " + criteria);
         model.addAttribute("list", service.getList(criteria));
+        model.addAttribute("pageMaker", new PageDTO(criteria, service.getTotal(criteria)));
     }
 
     @GetMapping("/register")
@@ -42,28 +41,35 @@ public class BoardController {
     }
 
     @GetMapping({"/get", "/modify"})
-    public void get(@RequestParam("bno") Long bno, Model model) {
+    public void get(@RequestParam("bno") Long bno, @ModelAttribute("criteria") Criteria criteria, Model model) {
         log.info("/get or modify");
         model.addAttribute("board", service.get(bno));
     }
 
     @PostMapping("/modify")
-    public String modify(BoardVO board, RedirectAttributes redirectAttributes) {
+    public String modify(BoardVO board,
+                         @ModelAttribute("criteria") Criteria criteria,
+                         RedirectAttributes redirectAttributes) {
         log.info("modify : " + board);
         if (service.modify(board)) {
             redirectAttributes.addFlashAttribute("result", "success");
         }
+        redirectAttributes.addAttribute("pageNum", criteria.getPageNum());
+        redirectAttributes.addAttribute("amount", criteria.getAmount());
 
         return "redirect:/board/list";
     }
 
     @PostMapping("/remove")
-    public String remove(@RequestParam("bno") Long bno, RedirectAttributes redirectAttributes) {
+    public String remove(@RequestParam("bno") Long bno,
+                         @ModelAttribute("criteria") Criteria criteria,
+                         RedirectAttributes redirectAttributes) {
         log.info("remove " + bno);
-
         if (service.remove(bno)) {
             redirectAttributes.addFlashAttribute("result", "success");
         }
+        redirectAttributes.addAttribute("pageNum", criteria.getPageNum());
+        redirectAttributes.addAttribute("amount", criteria.getAmount());
 
         return "redirect:/board/list";
     }

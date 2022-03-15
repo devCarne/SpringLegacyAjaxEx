@@ -3,17 +3,53 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stu.kms.mapper.BoardMapper">
+
     <select id="getList" resultType="stu.kms.domain.BoardVO">
         select * from TBL_BOARD where BNO > 0
     </select>
 
+    <sql id="criteria">
+        <trim prefix="(" suffix=") AND " prefixOverrides="OR">
+            <foreach collection="typeArr" item="type">
+                <trim prefix="OR">
+                    <choose>
+                        <when test="type == 'T'.toString()">
+                            TITLE like '%'||#{keword}||'%'
+                        </when>
+                        <when test="type == 'C'.toString()">
+                            CONTENT like '%'||#{keyword}||'%'
+                        </when>
+                        <when test="type == 'W'.toString()">
+                            WRITER like '%'||#{keyword}||'%'
+                        </when>
+                    </choose>
+                </trim>
+            </foreach>
+        </trim>
+    </sql>
+
     <select id="getListWithPaging" resultType="stu.kms.domain.BoardVO">
         <![CDATA[
-            select BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE from (
-                select /*+INDEX_DESC(TBL_BOARD PK_BOARD)*/ ROWNUM RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
-                from TBL_BOARD where ROWNUM <= #{pageNum} * #{amount}
-                ) where RN > (#{pageNum} - 1) * #{amount}
+            select BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+            from (
+                select /*+INDEX_DESC(TBL_BOARD PK_BOARD)*/
+                       ROWNUM RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+                from TBL_BOARD
+                where
         ]]>
+        <include refid="criteria"></include>
+        <![CDATA[
+            rownum <= #{pageNum} * #{amount}
+            )
+        where RN > (#{pageNum} - 1) * #{amount}
+        ]]>
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(*) from TBL_BOARD
+        where
+        <include refid="criteria"></include>
+        bno > 0
     </select>
 
     <insert id="insert">

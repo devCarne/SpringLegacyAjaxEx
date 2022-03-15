@@ -13,14 +13,14 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
-            <div class="panel-heading">Board Read Page</div>
+            <div class="panel-heading">Board Modify Page</div>
             <div class="panel-body">
                 <form role="form" action="/board/modify" method="post">
                     <div class="form-group">
                         <label>Bno</label>
                         <input class="form-control" name="bno" value="${board.bno}" readonly>
                     </div>
-                    <div>
+                    <div class="form-group">
                         <label>Title</label>
                         <input class="form-control" name="title" value="${board.title}">
                     </div>
@@ -42,6 +42,9 @@
                         <input class="form-control" name="updateDate"
                                value="<fmt:formatDate value='${board.updateDate}' pattern='yyyy/MM/dd'/>" readonly>
                     </div>
+                    <input type="hidden" name="pageNum" value="<c:out value='${criteria.pageNum}'/>">
+                    <input type="hidden" name="amount" value="<c:out value='${criteria.amount}'/>">
+
                     <button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
                     <button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
                     <button type="submit" data-oper="list" class="btn btn-info">List</button>
@@ -67,7 +70,12 @@
                 formObj.attr("action", "/board/remove");
             } else if (operation === "list") {
                 formObj.attr("action", "/board/list").attr("method", "get");
+                var pageNumTag = $("input[name='pageNum']").clone();
+                var amountTag = $("input[name='amount']").clone();
+
                 formObj.empty();
+                formObj.append(pageNumTag);
+                formObj.append(amountTag);
             }
             formObj.submit();
         });

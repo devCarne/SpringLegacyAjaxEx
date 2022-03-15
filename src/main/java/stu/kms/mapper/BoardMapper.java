@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface BoardMapper {
 
+    int getTotalCount(Criteria criteria);
+
     List<BoardVO> getList();
 
     List<BoardVO> getListWithPaging(Criteria criteria);
