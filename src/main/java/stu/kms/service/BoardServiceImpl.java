@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import stu.kms.domain.BoardVO;
+import stu.kms.domain.Criteria;
 import stu.kms.mapper.BoardMapper;
 
 import java.util.List;
@@ -40,8 +41,8 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public List<BoardVO> getList() {
-        log.info("getList...");
-        return mapper.getList();
+    public List<BoardVO> getList(Criteria criteria) {
+        log.info("getList with Criteria..." + criteria);
+        return mapper.getListWithPaging(criteria);
     }
 }

@@ -32,9 +32,9 @@
                     </thead>
                     <c:forEach items="${list}" var="board">
                         <tr>
-                            <td><c:out value="${board.bno}"/></td>
-                            <td><c:out value="${board.title}"/></td>
-                            <td><c:out value="${board.writer}"/></td>
+                            <td>${board.bno}</td><!--target="_blank"-->
+                            <td><a href="/board/get?bno=${board.bno}">${board.title}</a></td>
+                            <td>${board.writer}</td>
                             <td><fmt:formatDate value="${board.regDate}" pattern="yyyy-MM-dd"/></td>
                             <td><fmt:formatDate value="${board.updateDate}" pattern="yyyy-MM-dd"/></td>
                         </tr>
@@ -73,9 +73,10 @@
         var result = '<c:out value="${result}"/>';
 
         checkModal(result);
+        history.replaceState({},null,null);
 
         function checkModal(result) {
-            if (result === '') {
+            if (result === '' || history.state) {
                 return;
             }
 

@@ -1,6 +1,7 @@
 package stu.kms.service;
 
 import stu.kms.domain.BoardVO;
+import stu.kms.domain.Criteria;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ public interface BoardService {
 
     boolean remove(Long bno);
 
-    List<BoardVO> getList();
+    List<BoardVO> getList(Criteria criteria);
 }

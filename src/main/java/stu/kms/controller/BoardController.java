@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import stu.kms.domain.BoardVO;
+import stu.kms.domain.Criteria;
 import stu.kms.service.BoardService;
 
 @Controller
@@ -22,9 +23,9 @@ public class BoardController {
     private BoardService service;
 
     @GetMapping("/list")
-    public void list(Model model) {
-        log.info("list");
-        model.addAttribute("list", service.getList());
+    public void list(Criteria criteria, Model model) {
+        log.info("list : " + criteria);
+        model.addAttribute("list", service.getList(criteria));
     }
 
     @GetMapping("/register")
@@ -40,16 +41,15 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping
+    @GetMapping({"/get", "/modify"})
     public void get(@RequestParam("bno") Long bno, Model model) {
-        log.info("/get");
+        log.info("/get or modify");
         model.addAttribute("board", service.get(bno));
     }
 
     @PostMapping("/modify")
     public String modify(BoardVO board, RedirectAttributes redirectAttributes) {
         log.info("modify : " + board);
-
         if (service.modify(board)) {
             redirectAttributes.addFlashAttribute("result", "success");
         }

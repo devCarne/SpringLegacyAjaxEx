@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import stu.kms.domain.BoardVO;
+import stu.kms.domain.Criteria;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -58,6 +59,6 @@ public class BoardServiceTest {
     }
     @Test
     public void testGetList() {
-        service.getList().forEach(board -> log.info(board));
+        service.getList(new Criteria(2, 10)).forEach(board -> log.info(board));
     }
 }

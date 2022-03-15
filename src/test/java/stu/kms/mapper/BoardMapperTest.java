@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import stu.kms.domain.BoardVO;
+import stu.kms.domain.Criteria;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("file:src/main/webapp/WEB-INF/spring/root-context.xml")
@@ -63,5 +66,15 @@ public class BoardMapperTest {
         board.setWriter("user00");
 
         log.info("UPDATE count : " + boardMapper.update(board));
+    }
+
+    @Test
+    public void testPaging() {
+        Criteria criteria = new Criteria();
+        criteria.setPageNum(3);
+        criteria.setAmount(10);
+
+        List<BoardVO> list = boardMapper.getListWithPaging(criteria);
+        list.forEach(log::info);
     }
 }
