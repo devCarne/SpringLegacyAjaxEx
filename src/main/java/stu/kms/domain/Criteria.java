@@ -2,6 +2,7 @@ package stu.kms.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Data
 public class Criteria {
@@ -21,5 +22,15 @@ public class Criteria {
 
     public String[] getTypeArr() {
         return type == null ? new String[] {} : type.split("");
+    }
+
+    public String getListLink() {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath("")
+                .queryParam("pageNum", this.pageNum)
+                .queryParam("amount", this.getAmount())
+                .queryParam("type", this.getType())
+                .queryParam("keywrod", this.getKeyword());
+
+        return builder.toUriString();
     }
 }

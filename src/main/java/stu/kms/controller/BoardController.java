@@ -54,10 +54,13 @@ public class BoardController {
         if (service.modify(board)) {
             redirectAttributes.addFlashAttribute("result", "success");
         }
-        redirectAttributes.addAttribute("pageNum", criteria.getPageNum());
-        redirectAttributes.addAttribute("amount", criteria.getAmount());
+//        redirectAttributes.addAttribute("pageNum", criteria.getPageNum());
+//        redirectAttributes.addAttribute("amount", criteria.getAmount());
+//        redirectAttributes.addAttribute("type", criteria.getType());
+//        redirectAttributes.addAttribute("keyword", criteria.getKeyword());
 
-        return "redirect:/board/list";
+//        return "redirect:/board/list";
+        return "redirect:/board/list" + criteria.getListLink();
     }
 
     @PostMapping("/remove")
@@ -68,9 +71,12 @@ public class BoardController {
         if (service.remove(bno)) {
             redirectAttributes.addFlashAttribute("result", "success");
         }
-        redirectAttributes.addAttribute("pageNum", criteria.getPageNum());
-        redirectAttributes.addAttribute("amount", criteria.getAmount());
+//        redirectAttributes.addAttribute("pageNum", criteria.getPageNum());
+//        redirectAttributes.addAttribute("amount", criteria.getAmount());
+//        redirectAttributes.addAttribute("type", criteria.getType());
+//        redirectAttributes.addAttribute("keyword", criteria.getKeyword());
 
-        return "redirect:/board/list";
+//        return "redirect:/board/list";
+        return "redirect:/board/list" + criteria.getListLink();
     }
 }

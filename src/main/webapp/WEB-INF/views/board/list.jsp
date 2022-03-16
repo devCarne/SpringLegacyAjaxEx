@@ -41,6 +41,36 @@
                     </c:forEach>
                 </table>
                 <!-- /.table-responsive -->
+
+                <!-- search -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form id="searchForm" action="/board/list" method="get">
+                            <select name="type">
+                                <option value=""
+                                    <c:out value="${pageMaker.criteria.type == null?'selected':''}"/>>--</option>
+                                <option value="T"
+                                    <c:out value="${pageMaker.criteria.type == 'T'?'selected':''}"/>>제목</option>
+                                <option value="C"
+                                    <c:out value="${pageMaker.criteria.type == 'C'?'selected':''}"/>>내용</option>
+                                <option value="W"
+                                    <c:out value="${pageMaker.criteria.type == 'W'?'selected':''}"/>>작성자</option>
+                                <option value="TC"
+                                    <c:out value="${pageMaker.criteria.type == 'TC'?'selected':''}"/>>제목 or 내용</option>
+                                <option value="TW"
+                                    <c:out value="${pageMaker.criteria.type == 'TW'?'selected':''}"/>>제목 or 작성자</option>
+                                <option value="TWC"
+                                    <c:out value="${pageMaker.criteria.type == 'TWC'?'selected':''}"/>>제목 or 내용 or 작성자</option>
+                            </select>
+                            <input type="text" name="keyword" value="<c:out value='${pageMaker.criteria.keyword}'/>">
+                            <input type="hidden" name="pageNum" value="${pageMaker.criteria.pageNum}">
+                            <input type="hidden" name="amount" value="${pageMaker.criteria.amount}">
+                            <button class="btn btn-default">Search</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- search end-->
+
                 <!-- paging -->
                 <div class="pull-right">
                     <ul class="pagination">
@@ -48,7 +78,9 @@
                             <li class="paginate_button previous"><a href="${pageMaker.startPage - 1}">Previous</a></li>
                         </c:if>
                         <c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
-                            <li class="paginate_button"><a href="${num}">${num}</a></li>
+                            <li class="paginate_button ${pageMaker.criteria.pageNum == num? 'active':''}">
+                                <a href="${num}">${num}</a>
+                            </li>
                         </c:forEach>
                         <c:if test="${pageMaker.next}">
                             <li class="paginate_button next"><a href="${pageMaker.endPage + 1}">Next</a></li>
@@ -58,6 +90,8 @@
                 <form id="actionForm" action="/board/list" method="get">
                     <input type="hidden" name="pageNum" value="${pageMaker.criteria.pageNum}">
                     <input type="hidden" name="amount" value="${pageMaker.criteria.amount}">
+                    <input type="hidden" name="type" value="<c:out value='${pageMaker.criteria.type}'/>">
+                    <input type="hidden" name="keyword" value="<c:out value='${pageMaker.criteria.keyword}'/>">
                 </form>
 
                 <!-- end paging -->
@@ -116,6 +150,25 @@
             actionForm.append("<input type='hidden' name='bno' value='" + $(this).attr("href") + "'>");
             actionForm.attr("action", "/board/get");
             actionForm.submit();
+        });
+
+        //검색 버튼 페이징 처리
+        var searchForm = $("#searchForm");
+
+        $("#searchForm button").on("click", function (e) {
+            if (!searchForm.find("option:selected").val()) {
+                alert("검색 옵션을 선택하세요.");
+                return false;
+            }
+
+            if (!searchForm.find("input[name='keyword']").val()) {
+                alert("키워드를 입력하세요.");
+                return false;
+            }
+
+            searchForm.find("input[name='pageNum']").val("1");
+            e.preventDefault();
+            searchForm.submit();
         });
 
         //페이지 이동 처리

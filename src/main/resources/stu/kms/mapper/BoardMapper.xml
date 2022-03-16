@@ -14,7 +14,7 @@
                 <trim prefix="OR">
                     <choose>
                         <when test="type == 'T'.toString()">
-                            TITLE like '%'||#{keword}||'%'
+                            TITLE like '%'||#{keyword}||'%'
                         </when>
                         <when test="type == 'C'.toString()">
                             CONTENT like '%'||#{keyword}||'%'

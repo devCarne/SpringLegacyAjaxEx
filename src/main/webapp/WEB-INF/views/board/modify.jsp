@@ -44,6 +44,8 @@
                     </div>
                     <input type="hidden" name="pageNum" value="<c:out value='${criteria.pageNum}'/>">
                     <input type="hidden" name="amount" value="<c:out value='${criteria.amount}'/>">
+                    <input type="hidden" name="type" value="<c:out value='${criteria.type}'/>">
+                    <input type="hidden" name="keyword" value="<c:out value='${criteria.keyword}'/>">
 
                     <button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
                     <button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
@@ -61,6 +63,7 @@
         var formObj = $("form");
 
         $("button").on("click", function (e) {
+
             e.preventDefault();
 
             var operation = $(this).data("oper");
@@ -72,10 +75,14 @@
                 formObj.attr("action", "/board/list").attr("method", "get");
                 var pageNumTag = $("input[name='pageNum']").clone();
                 var amountTag = $("input[name='amount']").clone();
+                var typeTag = $("input[name='type']").clone();
+                var keywordTag = $("input[name='keyword']").clone();
 
                 formObj.empty();
                 formObj.append(pageNumTag);
                 formObj.append(amountTag);
+                formObj.append(typeTag);
+                formObj.append(keywordTag);
             }
             formObj.submit();
         });
