@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stu.kms.domain.Criteria;
+import stu.kms.domain.ReplyPageDTO;
 import stu.kms.domain.ReplyVO;
 import stu.kms.mapper.ReplyMapper;
 import stu.kms.service.ReplyService;
@@ -34,13 +35,12 @@ public class ReplyController {
     }
 
     @GetMapping(value = "/pages/{bno}/{page}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ReplyVO>> getList(@PathVariable("bno") Long bno, @PathVariable("page") int page) {
-        log.info("getList...");
-
+    public ResponseEntity<ReplyPageDTO> getList(@PathVariable("bno") Long bno, @PathVariable("page") int page) {
         Criteria criteria = new Criteria(page, 10);
         log.info(criteria);
+        log.info("get Reply List bno : " + bno);
 
-        return new ResponseEntity<>(service.getList(criteria, bno), HttpStatus.OK);
+        return new ResponseEntity<>(service.getListPage(criteria, bno), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{rno}", produces = MediaType.APPLICATION_JSON_VALUE)

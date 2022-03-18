@@ -1,6 +1,7 @@
 package stu.kms.service;
 
 import stu.kms.domain.Criteria;
+import stu.kms.domain.ReplyPageDTO;
 import stu.kms.domain.ReplyVO;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ReplyService {
     int remove(Long rno);
 
     List<ReplyVO> getList(Criteria criteria, Long bno);
+
+    ReplyPageDTO getListPage(Criteria criteria, Long bno);
 }

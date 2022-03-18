@@ -21,9 +21,25 @@
     </update>
 
     <select id="getListWithPaging" resultType="stu.kms.domain.ReplyVO">
-        select *
-        from TBL_REPLY
-        where BNO = #{bno}
-        order by RNO
+        <![CDATA[
+            select RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
+            from (
+                 select /*+INDEX(TBL_REPLY IDX_REPLY) */
+                    ROWNUM RN, RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
+                 from TBL_REPLY
+                 where BNO = #{bno}
+                 and RNO > 0
+                 and ROWNUM <= #{criteria.pageNum} * #{criteria.amount}
+                )
+            where RN > (#{criteria.pageNum} - 1) * #{criteria.amount}
+        ]]>
+    </select>
+
+    <select id="getCountByBno" resultType="int">
+        <![CDATA[
+            select count(RNO)
+            from TBL_REPLY
+            where BNO = #{bno}
+        ]]>
     </select>
 </mapper>
