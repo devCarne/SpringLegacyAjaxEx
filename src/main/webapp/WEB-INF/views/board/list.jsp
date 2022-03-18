@@ -175,7 +175,10 @@
         var actionForm = $("#actionForm");
         $(".paginate_button a").on("click", function (e) {
             e.preventDefault();
-            console.log("click");
+            //뒤로가기 문제 해결
+            e.stopPropagation();
+            actionForm.attr("action", "/board/list");
+
             actionForm.find("input[name='pageNum']").val($(this).attr("href"));
             actionForm.submit();
         });
