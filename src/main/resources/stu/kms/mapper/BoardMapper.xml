@@ -30,10 +30,10 @@
 
     <select id="getListWithPaging" resultType="stu.kms.domain.BoardVO">
         <![CDATA[
-            select BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+            select BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE, REPLYCNT
             from (
                 select /*+INDEX_DESC(TBL_BOARD PK_BOARD)*/
-                       ROWNUM RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+                       ROWNUM RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE, REPLYCNT
                 from TBL_BOARD
                 where
         ]]>
@@ -76,5 +76,9 @@
     <update id="update">
         update TBL_BOARD set TITLE = #{title}, CONTENT = #{content}, WRITER = #{writer}, UPDATEDATE = sysdate
         where BNO = #{bno}
+    </update>
+
+    <update id="updateReplyCnt">
+        update TBL_BOARD set REPLYCNT = REPLYCNT + #{amount} where BNO = #{bno}
     </update>
 </mapper>

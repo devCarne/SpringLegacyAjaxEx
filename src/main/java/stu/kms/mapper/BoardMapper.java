@@ -1,5 +1,6 @@
 package stu.kms.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import stu.kms.domain.BoardVO;
 import stu.kms.domain.Criteria;
 
@@ -22,4 +23,6 @@ public interface BoardMapper {
     int delete(Long bno);
 
     int update(BoardVO board);
+
+    public void updateReplyCnt(@Param("bno") Long bno, @Param("amount") int amount);
 }
