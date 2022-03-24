@@ -1,5 +1,6 @@
 package stu.kms.service;
 
+import stu.kms.domain.BoardAttachVO;
 import stu.kms.domain.BoardVO;
 import stu.kms.domain.Criteria;
 
@@ -18,4 +19,6 @@ public interface BoardService {
     public int getTotal(Criteria criteria);
 
     List<BoardVO> getList(Criteria criteria);
+
+    List<BoardAttachVO> getAttachList(Long bno);
 }

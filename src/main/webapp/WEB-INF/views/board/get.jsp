@@ -4,12 +4,15 @@
 
 <%@ include file="../includes/header.jsp"%>
 
+<%--헤더--%>
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">Board Read</h1>
     </div>
 </div>
+<%--헤더--%>
 
+<%--본문--%>
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
@@ -44,6 +47,160 @@
         </div>
     </div>
 </div>
+<%--본문--%>
+
+<%--첨부파일--%>
+
+<%--원본 이미지 표시--%>
+<div class="bigPictureWrapper">
+    <div class="bigPicture">
+
+    </div>
+</div>
+<%--원본 이미지 표시--%>
+
+<%--첨부파일 목록--%>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+
+            <div class="panel-heading">files</div>
+
+            <div class="panel-body">
+                <div class="uploadResult">
+                    <ul>
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<%--첨부파일 목록--%>
+<%--JavaScript--%>
+<script>
+    //첨부파일 목록 가져오기
+    let bno = '<c:out value="${board.bno}"/>';
+    $.getJSON("/board/getAttachList", {bno: bno}, function (arr) {
+        console.log(arr);
+
+        let fileCallPath
+        let str = "";
+        $(arr).each(function (i, attach) {
+            if (attach.fileType) {
+                fileCallPath = encodeURIComponent(attach.uploadPath + "/s_" + attach.uuid + "_" + attach.fileName);
+
+                str +=
+                    "<li data-path='" + attach.uploadPath + "' data-uuid='" + attach.uuid + "' data-filename='" + attach.fileName + "' data-type='" + attach.fileType + "'>" +
+                    "   <div>" +
+                    "       <img src='/display?fileName=" + fileCallPath + "'>" +
+                    "   </div>" +
+                    "</li>"
+            } else {
+                fileCallPath = encodeURIComponent(attach.uploadPath + "/" + attach.uuid + "_" + attach.fileName);
+
+                str +=
+                    "<li data-path='" + attach.uploadPath + "' data-uuid='" + attach.uuid + "' data-filename='" + attach.fileName + "' data-type='" + attach.fileType + "'>" +
+                    "   <div>" +
+                    "       <span>" + attach.fileName + "</span><br/>" +
+                    "       <img src='/resources/img/attach.png'>" +
+                    "   </div>" +
+                    "</li>"
+            }
+        });
+        $(".uploadResult ul").html(str);
+    });
+    //첨부파일 목록 가져오기
+
+    //첨부파일 다운로드/원본보기
+    $(".uploadResult").on("click", "li", function (e) {
+        console.log("view image");
+
+        let li_Obj = $(this);
+        let path = encodeURIComponent(li_Obj.data("path") + "/" + li_Obj.data("uuid") + "_" + li_Obj.data("filename"));
+
+        if (li_Obj.data("type")) {
+            showImage(path.replace(new RegExp(/\\/g), "/"));
+        } else {
+            self.location = "/download?fileName=" + path;
+        }
+    });
+    //첨부파일 다운로드/원본보기
+
+    //이미지 원본보기 함수
+    function showImage(fileCallPath) {
+        alert(fileCallPath);
+
+        $(".bigPictureWrapper").css("display","flex").show();
+
+        $(".bigPicture")
+            .html("<img src='/display?fileName=" + fileCallPath + "'>")//UploadController.display()호출
+            .animate({width: '100%', height: '100%'}, 1000);
+    }
+    //이미지 원본보기 함수
+
+    //원본 이미지 닫기
+    $(".bigPictureWrapper").on("click", function (e) {
+        $(".bigPicture").animate({width: '0%', height: '0%'}, 1000);
+        setTimeout(function () {
+            $(".bigPictureWrapper").hide();
+        }, 1000);
+    });
+</script>
+<%--JavaScript--%>
+<style>
+    .uploadResult {
+        width: 100%;
+        background-color: gray;
+    }
+
+    .uploadResult ul {
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .uploadResult ul li {
+        list-style: none;
+        padding: 10px;
+        align-content: center;
+        text-align: center;
+    }
+
+    .uploadResult ul li img {
+        width: 100px;
+    }
+
+    .uploadResult ul li span {
+        color: white;
+    }
+
+    .bigPictureWrapper {
+        position: absolute;
+        display: none;
+        justify-content: center;
+        align-content: center;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.7);
+    }
+
+    .bigPicture {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .bigPicture img {
+        width: 600px;
+    }
+</style>
+<%--첨부파일--%>
 
 <!-- comment -->
 <div class="row">
@@ -288,6 +445,8 @@
 </script>
 <script>
     $(document).ready(function () {
+
+        //게시물 수정창 버튼 처리
         var operForm = $("#operForm");
 
         $("button[data-oper='modify']").on("click", function () {
@@ -299,5 +458,6 @@
             operForm.attr("action", "/board/list")
             operForm.submit();
         });
+        //게시물 수정 창 버튼 처리
     });
 </script>

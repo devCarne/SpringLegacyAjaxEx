@@ -3,14 +3,23 @@ package stu.kms.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import oracle.jdbc.proxy.annotation.Post;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import stu.kms.domain.BoardAttachVO;
 import stu.kms.domain.BoardVO;
 import stu.kms.domain.Criteria;
 import stu.kms.domain.PageDTO;
 import stu.kms.service.BoardService;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
@@ -46,6 +55,13 @@ public class BoardController {
         model.addAttribute("board", service.get(bno));
     }
 
+    @GetMapping(value = "/getAttachList", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<BoardAttachVO>> getAttachList(Long bno) {
+        log.info("getAttachList" + bno);
+        return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
+    }
+
     @PostMapping("/modify")
     public String modify(BoardVO board,
                          @ModelAttribute("criteria") Criteria criteria,
@@ -68,7 +84,12 @@ public class BoardController {
                          @ModelAttribute("criteria") Criteria criteria,
                          RedirectAttributes redirectAttributes) {
         log.info("remove " + bno);
+
+        List<BoardAttachVO> attachList = service.getAttachList(bno);
+
         if (service.remove(bno)) {
+            deleteFiles(attachList);
+
             redirectAttributes.addFlashAttribute("result", "success");
         }
 //        redirectAttributes.addAttribute("pageNum", criteria.getPageNum());
@@ -78,5 +99,24 @@ public class BoardController {
 
 //        return "redirect:/board/list";
         return "redirect:/board/list" + criteria.getListLink();
+    }
+
+    private void deleteFiles(List<BoardAttachVO> attachList) {
+
+        if (attachList == null || attachList.size() == 0) return;
+
+        attachList.forEach(attach ->{
+            try {
+                Path file = Paths.get("C:\\upload\\" + attach.getUploadPath() + "\\" + attach.getUuid() + "_" + attach.getFileName());
+                Files.deleteIfExists(file);
+
+                if (Files.probeContentType(file).startsWith("image")) {
+                    Path thumbNail = Paths.get("C:\\upload\\" + attach.getUploadPath() + "\\s_" + attach.getUuid() + "_" + attach.getFileName());
+                    Files.delete(thumbNail);
+                }
+            } catch (Exception e) {
+                log.error("delete file error" + e.getMessage());
+            }
+        });
     }
 }
