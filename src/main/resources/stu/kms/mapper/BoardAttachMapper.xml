@@ -22,4 +22,8 @@
     <delete id="deleteAll">
         delete TBL_ATTACH where BNO = #{bno}
     </delete>
+
+    <select id="getOldFiles" resultType="stu.kms.domain.BoardAttachVO">
+        select * from TBL_ATTACH where UPLOADPATH = to_char(sysdate - 1, 'yyyy\mm\dd')
+    </select>
 </mapper>
